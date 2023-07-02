@@ -1,9 +1,8 @@
-export type getterProps = string;
+export type getterNameProps = string;
 export type getterReturn = string | null;
-export type cookieParts = any[];
+export type cookieParts = string[];
 
-export type setterProps = {
-  name: string;
-  value: string;
-  options: Record<string, any>;
-};
+export type setterNameProps = string;
+export type setterValueProps = string;
+export type setterOptionProps = Record<string, any>;
+export type setterReturn = void;
