@@ -1,23 +1,32 @@
-class Cookie {
-  getCookie(name) {
+import {
+  getterProps,
+  getterReturn,
+  cookieParts,
+  setterProps,
+  setterReturn,
+} from 'types';
+
+export class Cookie {
+  get(name: getterProps): getterReturn {
     const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
+    const parts = value.split(`; ${name}=`) as cookieParts;
+
     if (parts.length === 2) return parts.pop().split(';').shift();
+
+    return null;
   }
 
-  setCookie(name, value, options = {}) {
-    let updatedCookie =
-      encodeURIComponent(name) + '=' + encodeURIComponent(value);
+  set({ name, value, options = {} }: setterProps): setterReturn {
+    let newCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
 
     for (let optionKey in options) {
-      updatedCookie += '; ' + optionKey;
+      newCookie += '; ' + optionKey;
       let optionValue = options[optionKey];
-      if (optionValue !== true) {
-        updatedCookie += '=' + optionValue;
-      }
+
+      if (optionValue !== true) newCookie += '=' + optionValue;
     }
 
-    document.cookie = updatedCookie;
+    document.cookie = newCookie;
   }
 }
 
