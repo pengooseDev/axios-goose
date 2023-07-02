@@ -74,15 +74,23 @@ export class Axios {
   #resMiddleWare(res: AxiosInterceptorRes) {
     const { authorization, refreshtoken } = res.headers;
 
+    const validUntil = new Date();
+    validUntil.setTime(new Date().getTime() + COOKIE.EXPIRE.ACCESS_TOKEN);
+
     if (authorization) {
       this.#cookie.set(COOKIE.KEY.ACCESS_TOKEN, authorization, {
         ...COOKIE.CONFIG.DEFAULT,
+        expires: validUntil,
       });
     }
 
     if (refreshtoken) {
+      const validUntil = new Date();
+      validUntil.setTime(new Date().getTime() + COOKIE.EXPIRE.REFRESH_TOKEN);
+
       this.#cookie.set(COOKIE.KEY.REFRESH_TOKEN, refreshtoken, {
         ...COOKIE.CONFIG.DEFAULT,
+        expires: validUntil,
       });
     }
 
