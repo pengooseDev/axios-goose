@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Cookie } from 'utils';
-import { COOKIE, METHOD } from 'constants/';
+import { COOKIE, METHOD, STATUS_CODE } from 'constants/';
 import {
   AxiosInterceptorReqConfig,
   AuthReqConfig,
@@ -98,7 +98,47 @@ export class Axios {
   }
 
   #resOnError(error: AxiosRes) {
+    if (error.response && error?.response.status === STATUS_CODE.TOKEN.EXPIRE)
+      return this.#getNewToken(error.config);
+
     return Promise.reject(error);
+  }
+
+  async #getNewToken(config: AxiosInterceptorReqConfig) {
+    try {
+      const response = await this.#instance.post('/path/to/refresh/token', {
+        refreshToken: this.#cookie.get('REFRESH_TOKEN'),
+      });
+
+      const validUntil = new Date();
+      validUntil.setTime(new Date().getTime() + COOKIE.EXPIRE.REFRESH_TOKEN);
+
+      const {
+        data: { accessToken },
+      } = response;
+
+      if (accessToken) {
+        this.#cookie.set(COOKIE.KEY.ACCESS_TOKEN, accessToken, {
+          ...COOKIE.CONFIG.DEFAULT,
+          expires: validUntil,
+        });
+      }
+
+      const { headers } = config;
+      const newConfig = {
+        ...config,
+        headers: {
+          ...headers,
+          Authorization: `${this.#cookie
+            .get(COOKIE.KEY.ACCESS_TOKEN)
+            ?.replace('%', ' ')}`,
+        },
+      };
+
+      return this.#instance(newConfig);
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 
   /**
