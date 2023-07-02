@@ -17,7 +17,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
-  "author": "",
+  "author": "pengooseDev",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0"
