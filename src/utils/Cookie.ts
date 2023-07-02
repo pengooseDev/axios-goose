@@ -1,22 +1,38 @@
 import {
-  getterProps,
+  getterNameProps,
   getterReturn,
   cookieParts,
-  setterProps,
+  setterNameProps,
+  setterValueProps,
+  setterOptionProps,
   setterReturn,
 } from 'types';
 
 export class Cookie {
-  get(name: getterProps): getterReturn {
+  get(name: getterNameProps): getterReturn {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`) as cookieParts;
 
-    if (parts.length === 2) return parts.pop().split(';').shift();
+    if (parts.length === 2) {
+      const poppedPart = parts.pop();
+
+      if (!poppedPart) return null;
+
+      const result = poppedPart.split(';').shift();
+
+      if (!result) return null;
+
+      return result;
+    }
 
     return null;
   }
 
-  set({ name, value, options = {} }: setterProps): setterReturn {
+  set(
+    name: setterNameProps,
+    value: setterValueProps,
+    options: setterOptionProps = {}
+  ): setterReturn {
     let newCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
 
     for (let optionKey in options) {
@@ -29,5 +45,3 @@ export class Cookie {
     document.cookie = newCookie;
   }
 }
-
-export default Cookie;
