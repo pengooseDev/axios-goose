@@ -106,9 +106,12 @@ export class Axios {
 
   async #getNewToken(config: AxiosInterceptorReqConfig) {
     try {
-      const response = await this.#instance.post('/path/to/refresh/token', {
-        refreshToken: this.#cookie.get('REFRESH_TOKEN'),
-      });
+      const response = await this.#instance.post(
+        COOKIE.API_PATH.GET_NEW_ACCESS_TOKEN,
+        {
+          refreshToken: this.#cookie.get(COOKIE.KEY.REFRESH_TOKEN),
+        }
+      );
 
       const validUntil = new Date();
       validUntil.setTime(new Date().getTime() + COOKIE.EXPIRE.REFRESH_TOKEN);

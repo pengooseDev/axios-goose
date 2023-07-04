@@ -12,6 +12,10 @@ const PATH = Object.freeze({
   WILD_CARD: '/',
 });
 
+const API_PATH = Object.freeze({
+  GET_NEW_ACCESS_TOKEN: '/api/auth/refresh-token',
+});
+
 const CONFIG = Object.freeze({
   DEFAULT: Object.freeze({
     path: PATH.WILD_CARD,
@@ -22,5 +26,6 @@ export const COOKIE = Object.freeze({
   KEY,
   EXPIRE,
   PATH,
+  API_PATH,
   CONFIG,
 });
