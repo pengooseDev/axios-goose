@@ -23,7 +23,6 @@ Below is an example of how to use axios-goose in your project:
 Import Axios Goose in your project.
 
 ```javascript
-Copy code
 import { Axios } from 'axios-goose';
 ```
 
@@ -35,10 +34,11 @@ Initialize Axios Goose before making any requests.
 
 ```ts
 const isAuthReq = true; // Set this to true if you are making authorized requests
-const axiosInstance = new Axios(isAuthReq);
+const baseURL = 'https://api.example.com'; // Optionally set the baseURL
+const axiosInstance = new Axios(isAuthReq, baseURL);
 ```
 
-isAuthReq is a boolean that determines whether the requests should contain an Authorization header.
+isAuthReq is a boolean that determines whether the requests should contain an Authorization header. You should provide a baseURL which will be used as the base URL for all the HTTP requests made using this axios instance.
 
 ---
 
@@ -49,13 +49,13 @@ isAuthReq is a boolean that determines whether the requests should contain an Au
 To make a simple GET request:
 
 ```ts
-axiosInstance.get('your-endpoint');
+axiosInstance.get('/api/endpoint');
 ```
 
 To make a GET request with query parameters:
 
 ```ts
-axiosInstance.getByQuery('your-endpoint', {
+axiosInstance.getByQuery('/api/endpoint', {
   param1: 'value1',
   param2: 'value2',
 });
@@ -64,7 +64,7 @@ axiosInstance.getByQuery('your-endpoint', {
 To make a GET request with path parameters:
 
 ```ts
-axiosInstance.getByParams('your-endpoint', 'param-value');
+axiosInstance.getByParams('/api/endpoint', 'param-value');
 ```
 
 ### POST
@@ -72,7 +72,7 @@ axiosInstance.getByParams('your-endpoint', 'param-value');
 To make a POST request:
 
 ```ts
-axiosInstance.post('your-endpoint', { dataKey: 'dataValue' });
+axiosInstance.post('/api/endpoint', { dataKey: 'dataValue' });
 ```
 
 To make a POST request with multipart/form-data:
@@ -80,7 +80,7 @@ To make a POST request with multipart/form-data:
 ```ts
 const formData = new FormData();
 formData.append('key', 'value');
-axiosInstance.postMultipartFormData('your-endpoint', formData);
+axiosInstance.postMultipartFormData('/api/endpoint', formData);
 ```
 
 ### PUT
@@ -88,7 +88,7 @@ axiosInstance.postMultipartFormData('your-endpoint', formData);
 To make a PUT request:
 
 ```ts
-axiosInstance.put('your-endpoint', { dataKey: 'dataValue' }, optionalID);
+axiosInstance.put('/api/endpoint', { dataKey: 'dataValue' }, optionalID);
 ```
 
 ### PATCH
@@ -96,24 +96,58 @@ axiosInstance.put('your-endpoint', { dataKey: 'dataValue' }, optionalID);
 To make a PATCH request:
 
 ```ts
-axiosInstance.patch('your-endpoint', { dataKey: 'dataValue' });
+axiosInstance.patch('/api/endpoint', { dataKey: 'dataValue' });
 ```
 
-###DELETE
+### DELETE
+
 To make a DELETE request:
 
 ```ts
-axiosInstance.delete('your-endpoint', itemID);
+axiosInstance.delete('/api/endpoint', itemID);
 ```
 
 # Handling Tokens
 
 This library automatically handles access tokens and refresh tokens. Tokens are stored in cookies and are automatically attached to authorized requests. When an access token expires, it attempts to refresh the token using the refresh token.
 
-# Environment Variables
+> The library expects that the backend responds with a `1002 status code` when the access token is expired.
 
-You need to set an environment variable for the base URL of your API:
+---
+
+# Token Refresh Endpoint Configuration
+
+In order to enable automatic token refreshing functionality, the backend should provide an endpoint for token refreshing.
+
+> Note that this library uses a fixed path `/api/auth/refresh-token` for token refreshing.
+
+Please ensure that your backend implements an API endpoint at the following path for handling refresh token requests:
+
+```bash
+/api/auth/refresh-token
+```
+
+This endpoint should accept a POST request with a refresh token, and it should return a new access token if the provided refresh token is valid.
+
+## Backend Endpoint Conifguration:
+
+- HTTP Method: `POST`
+- Endpoint URL: `/api/auth/refresh-token`
+
+### Request Body:
 
 ```json
-REACT_APP_API_BASE_ROUTE=<your-api-base-url>
+{
+  "refreshToken": "<your-refresh-token>"
+}
 ```
+
+### Response:
+
+```json
+{
+  "accessToken": "<your-new-access-token>"
+}
+```
+
+Please configure your backend service to provide this endpoint with the above specifications to ensure that token refresh works seamlessly with this library.
