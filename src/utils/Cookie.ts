@@ -1,7 +1,6 @@
 import {
   getterNameProps,
   getterReturn,
-  cookieParts,
   setterNameProps,
   setterValueProps,
   setterOptionProps,
@@ -10,19 +9,12 @@ import {
 
 export class Cookie {
   get(name: getterNameProps): getterReturn {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`) as cookieParts;
+    const cookies = document.cookie.split('; ');
+    for (let cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
 
-    if (parts.length === 2) {
-      const poppedPart = parts.pop();
-
-      if (!poppedPart) return null;
-
-      const result = poppedPart.split(';').shift();
-
-      if (!result) return null;
-
-      return result;
+      if (decodeURIComponent(cookieName) === name)
+        return decodeURIComponent(cookieValue);
     }
 
     return null;
@@ -33,14 +25,19 @@ export class Cookie {
     value: setterValueProps,
     options: setterOptionProps = {}
   ): setterReturn {
-    let newCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+    let newCookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
-    for (let optionKey in options) {
-      newCookie += '; ' + optionKey;
-      let optionValue = options[optionKey];
+    if (options.expires)
+      if (Object.prototype.toString.call(options.expires) === '[object Date]')
+        newCookie += `expires=${options.expires.toUTCString()};`;
 
-      if (optionValue !== true) newCookie += '=' + optionValue;
-    }
+    if (options.path) newCookie += `path=${options.path};`;
+
+    if (options.domain) newCookie += `domain=${options.domain};`;
+
+    if (options.secure) newCookie += `secure;`;
+
+    if (options.sameSite) newCookie += `SameSite=${options.sameSite};`;
 
     document.cookie = newCookie;
   }
