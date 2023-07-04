@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { Cookie } from 'utils';
 import { COOKIE, METHOD, STATUS_CODE } from 'constants/';
 import {
@@ -15,16 +15,16 @@ import {
 } from 'types';
 
 export class Axios {
-  #instance;
-  #auth;
-  #cookie;
+  #instance: AxiosInstance;
+  #auth: boolean;
+  #cookie: Cookie;
 
   /**
    * @param {boolean} isAuthReq
    */
-  constructor(isAuthReq = false) {
+  constructor(isAuthReq = false, baseURL = '') {
     this.#instance = axios.create({
-      baseURL: `${process.env.REACT_APP_API_BASE_ROUTE}`,
+      baseURL: baseURL,
     });
     this.#auth = isAuthReq;
     this.#cookie = new Cookie();
