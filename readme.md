@@ -1,6 +1,3 @@
-markdown
-Copy code
-
 # Axios-goose 🦆
 
 Axios Goose is a lightweight and simple library that wraps around Axios for making HTTP requests to a RESTful API. This library is designed to streamline the process of managing authorization tokens (access tokens and refresh tokens) and offers a convenient interface for making various types of HTTP requests.
