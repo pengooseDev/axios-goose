@@ -1,6 +1,6 @@
 {
   "name": "axios-goose",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "libs/index.js",
   "files": [
@@ -10,13 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
   },
-  "compileOPtions": {
-    "target": "es5",
-    "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
-  },
+  "types": "index.d.ts",
+  "private": false,
   "author": "pengooseDev",
   "license": "ISC",
   "dependencies": {
